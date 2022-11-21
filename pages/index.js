@@ -12,9 +12,12 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import admin from "pages/admin";
+import Admin from "pages/admin";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Link } from "react-router-dom";
+import styles from "../styles/index.module.css";
+import { isJsxClosingFragment } from "typescript";
+import { PrismaClient } from "@prisma/client";
 
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
@@ -51,8 +54,8 @@ function App() {
   let [password, setPassword] = useState("");
   let [loggedIn, setLoggedIn] = useState(false);
   // let [validUsers, setValidUsers] = useState([{}]);
-  let validUsers = "Wendy";
-  let validPassword = "Xiong";
+  let validUsers = "A";
+  let validPassword = "A";
 
   function handleClick() {
     if (name === "" || password === "") {
@@ -62,16 +65,17 @@ function App() {
     } else {
       alert("Your username or password is incorrect");
     }
-    // setLoggedIn(true);
-    // alert(`My name is ${name} and my password is ${password}, ${loggedIn}`);
   }
 
   function handleName(e) {
+    console.log(e)
     setName(e.target.value);
+    console.log(name);
   }
 
   function handlePassword(e) {
     setPassword(e.target.value);
+    // console.log(password)
   }
 
   function handleLogOut(e) {
@@ -106,20 +110,33 @@ function App() {
   }
 
   const HandleAlert = () => {
-    alert("Your cubicle has been booked");
+    alert("Your Cubicle Has Been Booked, an email will be sent");
   };
+
+
+  const updatedCampus = async () => await prisma.Prof.update({
+    where: { email: "gdennis@gmail.com" },
+      data: {
+        profile: {
+          update: {
+            Campus: value
+        },
+      },
+    },
+  });
 
   if (loggedIn === false) {
     return (
-      <div className="App">
+      <div className={styles.login}>
         {/* <h1 className='HelloKitty'>.</h1> */}
         <input
-          className="username"
+          className={styles.username}
           placeholder="Enter Your Username"
           onChange={handleName}
         />
         <br />
         <input
+          className={styles.password}
           placeholder="Enter Your Password"
           onChange={handlePassword}
           type="password"
@@ -127,7 +144,7 @@ function App() {
           inputMode="numeric"
         />
         <br />
-        <button className="LoginButton" onClick={handleClick}>
+        <button className={styles.a} onClick={handleClick}>
           LOGIN
         </button>
       </div>
@@ -136,59 +153,47 @@ function App() {
     return (
       <div>
         <div>
-          <button className="LoggedOutButton" onClick={handleLogOut}>
+          <button className={styles.logout} onClick={handleLogOut}>
             LOGOUT
           </button>
-          <div className="App">
-            <Calendar
+          <div className={styles.logo}></div>
+          <div className={styles.pickdate}>Select a date</div>
+          <div style={{ textAlign: "center" }}>
+            <DatePicker
+              placeholderText="Click here to select"
+              selected={newEvent.start}
+              onChange={(start) => setNewEvent({ ...newEvent, start })}
+            />
+            <Calendar className={styles.calendar}
               localizer={localizer}
               events={allEvents}
               startAccessor="start"
               endAccessor="end"
-              style={{ height: 500, margin: "50px" }}
+              style={{ height: 300, width: 600, marginLeft: 375, marginTop: 15 }}
             />
             <div style={{ textAlign: "center" }}>
               {/* <input type="text" placeholder="Add Title" style={{ width: "20%", marginRight: "10px" }} value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} /> */}
-              <DatePicker
-                placeholderText="Date"
-                style={{ marginRight: "10px" }}
-                selected={newEvent.start}
-                onChange={(start) => setNewEvent({ ...newEvent, start })}
-                onSelect={console.log("some")}
-              />
+
               {/* <DatePicker placeholderText="End Date" selected={newEvent.end} onChange={(end) => setNewEvent({ ...newEvent, end })} /> */}
               {/* <button stlye={{ marginTop: "10px" }} onClick={handleAddEvent}> Add Event </button>  */}
-            </div>
-          </div>
-          <div>
-            {/* <Dropdown
-            placeholder="Date"
-            options={['one', 'two', 'three']}
-            value="one"
-            onChange={(value) => console.log('change!', value)}
-            onSelect={(value) => console.log('selected!', value)} // always fires once a selection happens even if there is no change
-            onClose={(closedBySelection) => console.log('closedBySelection?:', closedBySelection)}
-            onOpen={() => console.log('open!')}
-        /> */}
-            {/* <div>
-                <image href="https://i.ibb.co/LJMjcfD/Waukesha.jpg"/>
-            </div> */}
-            <div>
               <Dropdown
-                placeholder="Campus"
+                className={styles.dropdown}
+                placeholder="Click here to select your Campus"
                 options={["RP A-Wing", "RP B-Wing", "Waukesha"]}
                 value="one"
-                onChange={(value) => console.log("change!", value)}
+                onChange={updatedCampus}
                 onSelect={(value) => console.log("selected!", value)} // always fires once a selection happens even if there is no change
                 onClose={(closedBySelection) =>
                   console.log("closedBySelection?:", closedBySelection)
                 }
                 onOpen={() => console.log("open!")}
               />
+              <div className={styles.img}></div>
             </div>
-            <div>
+            <div style={{ textAlign: "center" }}>
               <Dropdown
-                placeholder="Time"
+                className={styles.dropdown}
+                placeholder="Click & scroll to choose your time slot"
                 options={["AM", "PM", "BOTH"]}
                 value="one"
                 onChange={(value) => console.log("change!", value)}
@@ -199,10 +204,11 @@ function App() {
                 onOpen={() => console.log("open!")}
               />
             </div>
-            <div>
+            <div style={{ textAlign: "center" }}>
               <Dropdown
-                placeholder="Cubicle"
-                options={["1", "7", "12", "13", "20", "21"]}
+                className={styles.dropdown}
+                placeholder="Click & scroll to choose your cubicle number"
+                options={["1", "12", "20", "21", "27"]}
                 value="one"
                 onChange={(value) => console.log("change!", value)}
                 onSelect={(value) => console.log("selected!", value)} // always fires once a selection happens even if there is no change
@@ -213,26 +219,10 @@ function App() {
               />
             </div>
             <div>
-              <button style={{ textAlign: "center" }} onClick={HandleAlert}>
-                {" "}
-                Book{" "}
+              <button className={styles.Book} onClick={HandleAlert}>
+                Book
               </button>
             </div>
-            {/* // use the Selection component with other components like popovers etc.
-<Selection
-  options={['one', 'two', 'three']}
-  value="one"
-  onChange={(value) => console.log('change!', value)}
-/>; */}
-
-            {/* <Router>
-        <Routes>
-            <Route path='/' element={<admin/>}></Route>
-            <Route path='/MapOne' element={<MapOne/>}></Route>
-            <Route path='/MapTwo' element={<MapTwo/>}></Route>
-            <Route path='/MapThree' element={<MapThree/>}></Route> 
-        </Routes>
-    </Router>   */}
           </div>
         </div>
       </div>

@@ -16,4 +16,3 @@ model Prof {
   Cubicle   Int?
   WholeName String? @db.VarChar(50)
 }
-

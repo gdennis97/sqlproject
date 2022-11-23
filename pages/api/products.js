@@ -5,3 +5,18 @@ export default async function handle(req, res) {
   res.json(Prof);
 }
 
+// export async function getServerSideProps() {
+//   const updatedCampus = async () => await prisma.Prof.update({
+//     where: { email: "gdennis@icstars.org" },
+//       data: {
+//         profile: {
+//           update: {
+//             Campus: value
+//         },
+//       },
+//     },
+//   });
+//   return {
+//     props: {updatedCampus}
+//   }
+// }

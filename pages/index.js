@@ -13,6 +13,7 @@ import Admin from "pages/admin";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Link } from "react-router-dom";
 import styles from "../styles/index.module.css";
+// import getServerSideProps from "./api/products"
 
 
 
@@ -114,16 +115,22 @@ const campus = [{
     setAllEvents([...allEvents, newEvent]);
   }
 
-  const updatedCampus = async () => await prisma.Prof.update({
-    where: { email: "gdennis@icstars.org" },
-      data: {
-        profile: {
-          update: {
-            Campus: value
-        },
-      },
-    },
-  });
+
+  // const updatedCampus = async () => await prisma.Prof.update({
+  //   where: { email: "gdennis@icstars.org" },
+  //     data: {
+  //       profile: {
+  //         update: {
+  //           Campus: value
+  //       },
+  //     },
+  //   },
+  // });
+
+  
+
+
+
 
 
 
@@ -186,7 +193,7 @@ const campus = [{
                 placeholder="Click here to select your Campus"
                 options={["RP A-Wing", "RP B-Wing", "Waukesha"]}
                 value="one"
-                onChange={updatedCampus}
+                onChange={(value) => console.log("selected!", value)}
                 onSelect={(value) => console.log("selected!", value)} // always fires once a selection happens even if there is no change
                 onClose={(closedBySelection) =>
                   console.log("closedBySelection?:", closedBySelection)
